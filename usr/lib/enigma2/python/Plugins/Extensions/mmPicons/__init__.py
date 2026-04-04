@@ -7,7 +7,7 @@ import gettext
 from os import environ as os_environ
 import os
 import sys
-
+__version__ = "1.5"
 PluginLanguageDomain = 'mmPicons'
 PluginLanguagePath = 'Extensions/mmPicons/res/locale'
 
@@ -32,18 +32,17 @@ def logdata(name="", data=None):
 
 
 def getversioninfo():
-    currversion = '1.5'
     version_file = '/usr/lib/enigma2/python/Plugins/Extensions/mmPicons/version'
     if os.path.exists(version_file):
         try:
             fp = open(version_file, 'r').readlines()
             for line in fp:
                 if 'version' in line:
-                    currversion = line.split('=')[1].strip()
+                    __version__ = line.split('=')[1].strip()
         except BaseException:
             pass
-    logdata("Version ", currversion)
-    return (currversion)
+    logdata("Version ", __version__)
+    return (__version__)
 
 
 def localeInit():
