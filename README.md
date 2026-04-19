@@ -1,8 +1,12 @@
-# 🎨 mmPicons Addon
+<h1 align="center">🎨 mmPicons Addon</h1>
 
+![Visitors](https://komarev.com/ghpvc/?username=Belfagor2005&label=Repository%20Views&color=blueviolet)
+[![Version](https://img.shields.io/badge/Version-1.5-blue.svg)](https://github.com/Belfagor2005/mmPicons)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[![Python](https://img.shields.io/badge/Python-3.x-yellow.svg)](https://python.org)
 [![Python package](https://github.com/Belfagor2005/mmPicons/actions/workflows/pylint.yml/badge.svg)](https://github.com/Belfagor2005/mmPicons/actions/workflows/pylint.yml)
+[![Donate](https://img.shields.io/badge/_-Donate-red.svg?logo=githubsponsors&labelColor=555555&style=for-the-badge)](Maintainers.md#maintainers "Donate")
 
-![](https://komarev.com/ghpvc/?username=Belfagor2005)
 
 ---
 
