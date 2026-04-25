@@ -4,9 +4,7 @@
 from enigma import eTimer
 import os
 import ssl
-import socket
 from urllib.request import urlopen, Request
-from urllib.error import URLError, HTTPError
 
 
 def _get_request_agent():
