@@ -106,7 +106,9 @@ def get_mediafire_direct_url(page_url):
         return match.group(1)
 
     # Fallback: cerca il bottone "Click to download"
-    match = re.search(r'<a[^>]+href="([^"]+)"[^>]+class="input[^"]*download[^"]*"', html)
+    match = re.search(
+        r'<a[^>]+href="([^"]+)"[^>]+class="input[^"]*download[^"]*"',
+        html)
     if match:
         return match.group(1)
 
@@ -437,7 +439,8 @@ def defaultMoviePath():
     result = config.usage.default_path.value
     if not isdir(result):
         from Tools import Directories
-        return Directories.defaultRecordingLocation(config.usage.default_path.value)
+        return Directories.defaultRecordingLocation(
+            config.usage.default_path.value)
     return result
 
 
@@ -473,7 +476,8 @@ CountConnOk = 0
 
 def zCheckInternet(opt=1, server=None, port=None):
     global CountConnOk
-    checklist = [("8.8.4.4", 53), ("8.8.8.8", 53), ("www.lululla.altervista.org/", 80), ("www.linuxsat-support.com", 443), ("www.google.com", 443)]
+    checklist = [("8.8.4.4", 53), ("8.8.8.8", 53), ("www.lululla.altervista.org/",
+                                                    80), ("www.linuxsat-support.com", 443), ("www.google.com", 443)]
     if opt < 5:
         srv = checklist[opt]
     else:
@@ -500,7 +504,9 @@ def checkInternet():
     try:
         import socket
         socket.setdefaulttimeout(0.5)
-        socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect(('8.8.8.8', 53))
+        socket.socket(
+            socket.AF_INET, socket.SOCK_STREAM).connect(
+            ('8.8.8.8', 53))
         return True
     except Exception:
         return False
@@ -738,7 +744,9 @@ def is_exteplayer3_Available():
 def AdultUrl(url):
     from urllib.request import urlopen, Request
     req = Request(url)
-    req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.8.1.14) Gecko/20080404 Firefox/2.0.0.14')
+    req.add_header(
+        'User-Agent',
+        'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.8.1.14) Gecko/20080404 Firefox/2.0.0.14')
     r = urlopen(req, None, 15)
     link = r.read()
     r.close()
@@ -747,7 +755,8 @@ def AdultUrl(url):
     return link
 
 
-# Lista degli User-Agent (accorciata per esempio, ma tenerla completa dall'originale)
+# Lista degli User-Agent (accorciata per esempio, ma tenerla completa
+# dall'originale)
 ListAgent = [
     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36',
     'Mozilla/5.0 (X11; Ubuntu; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2919.83 Safari/537.36',
@@ -883,7 +892,11 @@ def ReadUrl2(url, referer):
 def getUrlSiVer(url, verify=True):
     try:
         headers = {'User-Agent': RequestAgent()}
-        response = requests.get(url, headers=headers, timeout=10, verify=verify)
+        response = requests.get(
+            url,
+            headers=headers,
+            timeout=10,
+            verify=verify)
         response.raise_for_status()
         return response.text
     except Exception as e:
@@ -894,7 +907,11 @@ def getUrlSiVer(url, verify=True):
 def getUrlNoVer(url, verify=True):
     try:
         headers = {'User-Agent': RequestAgent()}
-        response = requests.get(url, headers=headers, timeout=10, verify=verify)
+        response = requests.get(
+            url,
+            headers=headers,
+            timeout=10,
+            verify=verify)
         response.raise_for_status()
         return response.text
     except Exception as e:
@@ -958,7 +975,8 @@ def normalize(title):
     try:
         if isinstance(title, bytes):
             title = title.decode('utf-8')
-        return ''.join(c for c in unicodedata.normalize('NFKD', title) if unicodedata.category(c) != 'Mn')
+        return ''.join(c for c in unicodedata.normalize(
+            'NFKD', title) if unicodedata.category(c) != 'Mn')
     except Exception:
         return str(title)
 
@@ -966,7 +984,9 @@ def normalize(title):
 def get_safe_filename(filename, fallback=''):
     import re
     name = filename.replace(' ', '_').replace('/', '_')
-    name = unicodedata.normalize('NFKD', str(name)).encode('ASCII', 'ignore').decode('ASCII')
+    name = unicodedata.normalize(
+        'NFKD', str(name)).encode(
+        'ASCII', 'ignore').decode('ASCII')
     name = re.sub(r'[^a-z0-9-_]', '', name.lower())
     if not name:
         name = fallback
@@ -1095,7 +1115,13 @@ def charRemove(text):
     ]
     myreplace = text
     for ch in char:
-        myreplace = myreplace.replace(ch, '').replace('  ', ' ').replace('   ', ' ').strip()
+        myreplace = myreplace.replace(
+            ch,
+            '').replace(
+            '  ',
+            ' ').replace(
+            '   ',
+            ' ').strip()
     return myreplace
 
 
@@ -1120,12 +1146,15 @@ def cleanName(name):
     try:
         if not isinstance(name, str):
             name = str(name)
-        name = unicodedata.normalize("NFKD", name).encode("ASCII", "ignore").decode("ASCII")
+        name = unicodedata.normalize(
+            "NFKD", name).encode(
+            "ASCII", "ignore").decode("ASCII")
         name = name.replace('\xc2\x86', '').replace('\xc2\x87', '')
         name = name.replace(' ', '-').replace("'", '').replace('&', 'e')
         name = name.replace('(', '').replace(')', '')
         name = name.strip()
-        name = ''.join(['_' if c in non_allowed or ord(c) < 32 else c for c in name])
+        name = ''.join(['_' if c in non_allowed or ord(c)
+                       < 32 else c for c in name])
     except Exception as e:
         print("Error in cleanName: " + str(e))
         name = "noname"
@@ -1160,28 +1189,346 @@ def remove_line(filename, pattern):
 
 def badcar(name):
     bad = [
-        "sd", "hd", "fhd", "uhd", "4k", "1080p", "720p", "blueray", "x264", "aac", "ozlem", "hindi", "hdrip", "(cache)", "(kids)", "[3d-en]", "[iran-dubbed]", "imdb", "top250", "multi-audio",
-        "multi-subs", "multi-sub", "[audio-pt]", "[nordic-subbed]", "[nordic-subbeb]",
-        "SD", "HD", "FHD", "UHD", "4K", "1080P", "720P", "BLUERAY", "X264", "AAC", "OZLEM", "HINDI", "HDRIP", "(CACHE)", "(KIDS)", "[3D-EN]", "[IRAN-DUBBED]", "IMDB", "TOP250", "MULTI-AUDIO",
-        "MULTI-SUBS", "MULTI-SUB", "[AUDIO-PT]", "[NORDIC-SUBBED]", "[NORDIC-SUBBEB]",
-        "-ae-", "-al-", "-ar-", "-at-", "-ba-", "-be-", "-bg-", "-br-", "-cg-", "-ch-", "-cz-", "-da-", "-de-", "-dk-", "-ee-", "-en-", "-es-", "-ex-yu-", "-fi-", "-fr-", "-gr-", "-hr-", "-hu-",
-        "-in-", "-ir-", "-it-", "-lt-", "-mk-", "-mx-", "-nl-", "-no-", "-pl-", "-pt-", "-ro-", "-rs-", "-ru-", "-se-", "-si-", "-sk-", "-tr-", "-uk-", "-us-", "-yu-",
-        "-AE-", "-AL-", "-AR-", "-AT-", "-BA-", "-BE-", "-BG-", "-BR-", "-CG-", "-CH-", "-CZ-", "-DA-", "-DE-", "-DK-", "-EE-", "-EN-", "-ES-", "-EX-YU-", "-FI-", "-FR-", "-GR-", "-HR-", "-HU-",
-        "-IN-", "-IR-", "-IT-", "-LT-", "-MK-", "-MX-", "-NL-", "-NO-", "-PL-", "-PT-", "-RO-", "-RS-", "-RU-", "-SE-", "-SI-", "-SK-", "-TR-", "-UK-", "-US-", "-YU-",
-        "|ae|", "|al|", "|ar|", "|at|", "|ba|", "|be|", "|bg|", "|br|", "|cg|", "|ch|", "|cz|", "|da|", "|de|", "|dk|", "|ee|", "|en|", "|es|", "|ex-yu|", "|fi|", "|fr|", "|gr|", "|hr|", "|hu|",
-        "|in|", "|ir|", "|it|", "|lt|", "|mk|", "|mx|", "|nl|", "|no|", "|pl|", "|pt|", "|ro|", "|rs|", "|ru|", "|se|", "|si|", "|sk|", "|tr|", "|uk|", "|us|", "|yu|",
-        "|AE|", "|AL|", "|AR|", "|AT|", "|BA|", "|BE|", "|BG|", "|BR|", "|CG|", "|CH|", "|CZ|", "|DA|", "|DE|", "|DK|", "|EE|", "|EN|", "|ES|", "|EX-YU|", "|FI|", "|FR|", "|GR|", "|HR|", "|HU|",
-        "|IN|", "|IR|", "|IT|", "|LT|", "|MK|", "|MX|", "|NL|", "|NO|", "|PL|", "|PT|", "|RO|", "|RS|", "|RU|", "|SE|", "|SI|", "|SK|", "|TR|", "|UK|", "|US|", "|YU|",
-        "|Ae|", "|Al|", "|Ar|", "|At|", "|Ba|", "|Be|", "|Bg|", "|Br|", "|Cg|", "|Ch|", "|Cz|", "|Da|", "|De|", "|Dk|", "|Ee|", "|En|", "|Es|", "|Ex-Yu|", "|Fi|", "|Fr|", "|Gr|", "|Hr|", "|Hu|",
-        "|In|", "|Ir|", "|It|", "|Lt|", "|Mk|", "|Mx|", "|Nl|", "|No|", "|Pl|", "|Pt|", "|Ro|", "|Rs|", "|Ru|", "|Se|", "|Si|", "|Sk|", "|Tr|", "|Uk|", "|Us|", "|Yu|",
-        "(", ")", "[", "]", "u-", "3d", "'", "#", "/", "-", "_", ".", "+",
-        "PF1", "PF2", "PF3", "PF4", "PF5", "PF6", "PF7", "PF8", "PF9", "PF10", "PF11", "PF12", "PF13", "PF14", "PF15", "PF16", "PF17", "PF18", "PF19", "PF20",
-        "PF21", "PF22", "PF23", "PF24", "PF25", "PF26", "PF27", "PF28", "PF29", "PF30",
-        "480p", "ANIMAZIONE", "AVVENTURA", "BIOGRAFICO", "BDRip", "BluRay", "CINEMA", "COMMEDIA",
-        "DOCUMENTARIO", "DRAMMATICO", "FANTASCIENZA", "FANTASY", "HDCAM", "HDTC", "HDTS", "LD",
-        "MARVEL", "MD", "NEW_AUDIO", "R3", "R6", "SENTIMENTALE", "TC", "TELECINE", "TELESYNC",
-        "THRILLER", "Uncensored", "V2", "WEBDL", "WEBRip", "WEB", "WESTERN"
-    ]
+        "sd",
+        "hd",
+        "fhd",
+        "uhd",
+        "4k",
+        "1080p",
+        "720p",
+        "blueray",
+        "x264",
+        "aac",
+        "ozlem",
+        "hindi",
+        "hdrip",
+        "(cache)",
+        "(kids)",
+        "[3d-en]",
+        "[iran-dubbed]",
+        "imdb",
+        "top250",
+        "multi-audio",
+        "multi-subs",
+        "multi-sub",
+        "[audio-pt]",
+        "[nordic-subbed]",
+        "[nordic-subbeb]",
+        "SD",
+        "HD",
+        "FHD",
+        "UHD",
+        "4K",
+        "1080P",
+        "720P",
+        "BLUERAY",
+        "X264",
+        "AAC",
+        "OZLEM",
+        "HINDI",
+        "HDRIP",
+        "(CACHE)",
+        "(KIDS)",
+        "[3D-EN]",
+        "[IRAN-DUBBED]",
+        "IMDB",
+        "TOP250",
+        "MULTI-AUDIO",
+        "MULTI-SUBS",
+        "MULTI-SUB",
+        "[AUDIO-PT]",
+        "[NORDIC-SUBBED]",
+        "[NORDIC-SUBBEB]",
+        "-ae-",
+        "-al-",
+        "-ar-",
+        "-at-",
+        "-ba-",
+        "-be-",
+        "-bg-",
+        "-br-",
+        "-cg-",
+        "-ch-",
+        "-cz-",
+        "-da-",
+        "-de-",
+        "-dk-",
+        "-ee-",
+        "-en-",
+        "-es-",
+        "-ex-yu-",
+        "-fi-",
+        "-fr-",
+        "-gr-",
+        "-hr-",
+        "-hu-",
+        "-in-",
+        "-ir-",
+        "-it-",
+        "-lt-",
+        "-mk-",
+        "-mx-",
+        "-nl-",
+        "-no-",
+        "-pl-",
+        "-pt-",
+        "-ro-",
+        "-rs-",
+        "-ru-",
+        "-se-",
+        "-si-",
+        "-sk-",
+        "-tr-",
+        "-uk-",
+        "-us-",
+        "-yu-",
+        "-AE-",
+        "-AL-",
+        "-AR-",
+        "-AT-",
+        "-BA-",
+        "-BE-",
+        "-BG-",
+        "-BR-",
+        "-CG-",
+        "-CH-",
+        "-CZ-",
+        "-DA-",
+        "-DE-",
+        "-DK-",
+        "-EE-",
+        "-EN-",
+        "-ES-",
+        "-EX-YU-",
+        "-FI-",
+        "-FR-",
+        "-GR-",
+        "-HR-",
+        "-HU-",
+        "-IN-",
+        "-IR-",
+        "-IT-",
+        "-LT-",
+        "-MK-",
+        "-MX-",
+        "-NL-",
+        "-NO-",
+        "-PL-",
+        "-PT-",
+        "-RO-",
+        "-RS-",
+        "-RU-",
+        "-SE-",
+        "-SI-",
+        "-SK-",
+        "-TR-",
+        "-UK-",
+        "-US-",
+        "-YU-",
+        "|ae|",
+        "|al|",
+        "|ar|",
+        "|at|",
+        "|ba|",
+        "|be|",
+        "|bg|",
+        "|br|",
+        "|cg|",
+        "|ch|",
+        "|cz|",
+        "|da|",
+        "|de|",
+        "|dk|",
+        "|ee|",
+        "|en|",
+        "|es|",
+        "|ex-yu|",
+        "|fi|",
+        "|fr|",
+        "|gr|",
+        "|hr|",
+        "|hu|",
+        "|in|",
+        "|ir|",
+        "|it|",
+        "|lt|",
+        "|mk|",
+        "|mx|",
+        "|nl|",
+        "|no|",
+        "|pl|",
+        "|pt|",
+        "|ro|",
+        "|rs|",
+        "|ru|",
+        "|se|",
+        "|si|",
+        "|sk|",
+        "|tr|",
+        "|uk|",
+        "|us|",
+        "|yu|",
+        "|AE|",
+        "|AL|",
+        "|AR|",
+        "|AT|",
+        "|BA|",
+        "|BE|",
+        "|BG|",
+        "|BR|",
+        "|CG|",
+        "|CH|",
+        "|CZ|",
+        "|DA|",
+        "|DE|",
+        "|DK|",
+        "|EE|",
+        "|EN|",
+        "|ES|",
+        "|EX-YU|",
+        "|FI|",
+        "|FR|",
+        "|GR|",
+        "|HR|",
+        "|HU|",
+        "|IN|",
+        "|IR|",
+        "|IT|",
+        "|LT|",
+        "|MK|",
+        "|MX|",
+        "|NL|",
+        "|NO|",
+        "|PL|",
+        "|PT|",
+        "|RO|",
+        "|RS|",
+        "|RU|",
+        "|SE|",
+        "|SI|",
+        "|SK|",
+        "|TR|",
+        "|UK|",
+        "|US|",
+        "|YU|",
+        "|Ae|",
+        "|Al|",
+        "|Ar|",
+        "|At|",
+        "|Ba|",
+        "|Be|",
+        "|Bg|",
+        "|Br|",
+        "|Cg|",
+        "|Ch|",
+        "|Cz|",
+        "|Da|",
+        "|De|",
+        "|Dk|",
+        "|Ee|",
+        "|En|",
+        "|Es|",
+        "|Ex-Yu|",
+        "|Fi|",
+        "|Fr|",
+        "|Gr|",
+        "|Hr|",
+        "|Hu|",
+        "|In|",
+        "|Ir|",
+        "|It|",
+        "|Lt|",
+        "|Mk|",
+        "|Mx|",
+        "|Nl|",
+        "|No|",
+        "|Pl|",
+        "|Pt|",
+        "|Ro|",
+        "|Rs|",
+        "|Ru|",
+        "|Se|",
+        "|Si|",
+        "|Sk|",
+        "|Tr|",
+        "|Uk|",
+        "|Us|",
+        "|Yu|",
+        "(",
+        ")",
+        "[",
+        "]",
+        "u-",
+        "3d",
+        "'",
+        "#",
+        "/",
+        "-",
+        "_",
+        ".",
+        "+",
+        "PF1",
+        "PF2",
+        "PF3",
+        "PF4",
+        "PF5",
+        "PF6",
+        "PF7",
+        "PF8",
+        "PF9",
+        "PF10",
+        "PF11",
+        "PF12",
+        "PF13",
+        "PF14",
+        "PF15",
+        "PF16",
+        "PF17",
+        "PF18",
+        "PF19",
+        "PF20",
+        "PF21",
+        "PF22",
+        "PF23",
+        "PF24",
+        "PF25",
+        "PF26",
+        "PF27",
+        "PF28",
+        "PF29",
+        "PF30",
+        "480p",
+        "ANIMAZIONE",
+        "AVVENTURA",
+        "BIOGRAFICO",
+        "BDRip",
+        "BluRay",
+        "CINEMA",
+        "COMMEDIA",
+        "DOCUMENTARIO",
+        "DRAMMATICO",
+        "FANTASCIENZA",
+        "FANTASY",
+        "HDCAM",
+        "HDTC",
+        "HDTS",
+        "LD",
+        "MARVEL",
+        "MD",
+        "NEW_AUDIO",
+        "R3",
+        "R6",
+        "SENTIMENTALE",
+        "TC",
+        "TELECINE",
+        "TELESYNC",
+        "THRILLER",
+        "Uncensored",
+        "V2",
+        "WEBDL",
+        "WEBRip",
+        "WEB",
+        "WESTERN"]
     for i in range(1900, 2025):
         bad.append(str(i))
     for b in bad:
@@ -1195,7 +1542,10 @@ def get_title(title):
     title = re.sub(r'&#(\d+);', '', title)
     title = re.sub(r'(&#[0-9]+)([^;^0-9]+)', '\\1;\\2', title)
     title = title.replace('&quot;', '"').replace('&amp;', '&')
-    title = re.sub(r'\n|([[].+?[]])|([(].+?[)])|\s(vs|v[.])\s|(:|;|-|–|"|,|\'|\_|\.|\?)|\s', '', title).lower()
+    title = re.sub(
+        r'\n|([[].+?[]])|([(].+?[)])|\s(vs|v[.])\s|(:|;|-|–|"|,|\'|\_|\.|\?)|\s',
+        '',
+        title).lower()
     return title
 
 
@@ -1241,7 +1591,8 @@ def addstreamboq(bouquetname=None):
             break
     if add:
         with open(boqfile, 'a') as fp:
-            fp.write(f'#SERVICE 1:7:1:0:0:0:0:0:0:0:FROM BOUQUET "userbouquet.{bouquetname}.tv" ORDER BY bouquet\n')
+            fp.write(
+                f'#SERVICE 1:7:1:0:0:0:0:0:0:0:FROM BOUQUET "userbouquet.{bouquetname}.tv" ORDER BY bouquet\n')
 
 
 def stream2bouquet(url=None, name=None, bouquetname=None):

@@ -132,7 +132,6 @@ else:
     skin_path = plugin_path + '/res/skins/hd/'
 
 
-
 class mmList(MenuList):
     def __init__(self, lst):
         MenuList.__init__(self, lst, True, eListboxPythonMultiContent)
@@ -303,7 +302,8 @@ class SelectPicons(Screen):
             page = Utils.urlopen(req).read()
             data = json.loads(page)
             remote_date = data['pushed_at']
-            strp_remote_date = datetime.strptime(remote_date, '%Y-%m-%dT%H:%M:%SZ')
+            strp_remote_date = datetime.strptime(
+                remote_date, '%Y-%m-%dT%H:%M:%SZ')
             remote_date = strp_remote_date.strftime('%Y-%m-%d')
             self.session.openWithCallback(
                 self.install_update,
@@ -546,7 +546,10 @@ class MMarkPiconScreen(Screen):
             print(e)
 
     def downxmlpage(self):
-        getPage(self.url.encode()).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
+        getPage(
+            self.url.encode()).addCallback(
+            self._gotPageLoad).addErrback(
+            self.errorLoad)
 
     def errorLoad(self):
         self['info'].setText(_('Try again later ...'))
@@ -567,11 +570,27 @@ class MMarkPiconScreen(Screen):
                 if 'zip' in url:
                     url = url.replace('\\', '')
                     if self.movie:
-                        name = name.replace('_', ' ').replace('-', ' ').replace('mmk', '').replace('.zip', '')
-                        name = name + ' ' + data_created[0:10] + ' ' + 'Down: ' + download
+                        name = name.replace(
+                            '_',
+                            ' ').replace(
+                            '-',
+                            ' ').replace(
+                            'mmk',
+                            '').replace(
+                            '.zip',
+                            '')
+                        name = name + ' ' + \
+                            data_created[0:10] + ' ' + 'Down: ' + download
                     else:
-                        name = name.replace('_', ' ').replace('mmk', 'MMark').replace('.zip', '')
-                        name = name + ' ' + data_created[0:10] + ' ' + 'Down:' + download
+                        name = name.replace(
+                            '_',
+                            ' ').replace(
+                            'mmk',
+                            'MMark').replace(
+                            '.zip',
+                            '')
+                        name = name + ' ' + \
+                            data_created[0:10] + ' ' + 'Down:' + download
                     self.urls.append(url)
                     self.names.append(name)
             self['info'].setText(_('Please select ...'))
@@ -605,9 +624,11 @@ class MMarkPiconScreen(Screen):
                 if not page:
                     raise Exception("Can't fetch page")
 
-                match = re.search(r'<a[^>]+id="downloadButton"[^>]+href="([^"]+)"', page)
+                match = re.search(
+                    r'<a[^>]+id="downloadButton"[^>]+href="([^"]+)"', page)
                 if not match:
-                    match = re.search(r'(https://download[0-9]+\.mediafire\.com/[^\s"\']+)', page)
+                    match = re.search(
+                        r'(https://download[0-9]+\.mediafire\.com/[^\s"\']+)', page)
                 if not match:
                     raise Exception("No download link found")
                 direct_url = match.group(1)
@@ -644,7 +665,8 @@ class MMarkPiconScreen(Screen):
         try:
             self["info"].setText(_("Download in progress..."))
             self["progress"].show()
-            percent = int(100 * recvbytes / float(totalbytes)) if totalbytes > 0 else 0
+            percent = int(100 * recvbytes / float(totalbytes)
+                          ) if totalbytes > 0 else 0
             self['progress'].setValue(percent)
             self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (
                 recvbytes // 1024, totalbytes // 1024, 100 * recvbytes / float(totalbytes))
@@ -759,7 +781,10 @@ class MMarkFolderScreen(Screen):
             print(e)
 
     def downxmlpage(self):
-        getPage(self.url.encode()).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
+        getPage(
+            self.url.encode()).addCallback(
+            self._gotPageLoad).addErrback(
+            self.errorLoad)
 
     def errorLoad(self):
         self['info'].setText(_('Try again later ...'))
@@ -777,7 +802,8 @@ class MMarkFolderScreen(Screen):
             regex = '{"folderkey":"(.*?)".*?"name":"(.*?)".*?"created":"(.*?)"'
             match = re.compile(regex, re.DOTALL).findall(data2)
             for url, name, xc in match:
-                url = 'https://www.mediafire.com/api/1.5/folder/get_content.php?folder_key=' + url + '&content_type=files&chunk_size=1000&response_format=json'
+                url = 'https://www.mediafire.com/api/1.5/folder/get_content.php?folder_key=' + \
+                    url + '&content_type=files&chunk_size=1000&response_format=json'
                 url = url.replace('\\', '')
                 name = 'Picons-' + name
                 self.urls.append(url)
@@ -898,7 +924,10 @@ class MMarkFolderSkinZeta(Screen):
             print(e)
 
     def downxmlpage(self):
-        getPage(self.url.encode()).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
+        getPage(
+            self.url.encode()).addCallback(
+            self._gotPageLoad).addErrback(
+            self.errorLoad)
 
     def errorLoad(self):
         self.downloading = False
@@ -921,9 +950,22 @@ class MMarkFolderSkinZeta(Screen):
                 if '.zip' in url or '.ipk' in url or '.deb' in url:
                     url = url.replace('\\', '')
                     name = name.replace('enigma2-plugin-skins-', '')
-                    name = name.replace('_', ' ').replace('-', ' ').replace('mmk', '')
-                    name = name.replace('.zip', '').replace('.ipk', '').replace('.deb', '')
-                    name = name + ' ' + data_created[0:10] + ' ' + 'Down: ' + download
+                    name = name.replace(
+                        '_',
+                        ' ').replace(
+                        '-',
+                        ' ').replace(
+                        'mmk',
+                        '')
+                    name = name.replace(
+                        '.zip',
+                        '').replace(
+                        '.ipk',
+                        '').replace(
+                        '.deb',
+                        '')
+                    name = name + ' ' + \
+                        data_created[0:10] + ' ' + 'Down: ' + download
                     self.urls.append(url)
                     self.names.append(name)
             self['info'].setText(_('Please select ...'))
@@ -957,9 +999,11 @@ class MMarkFolderSkinZeta(Screen):
                 if not page:
                     raise Exception("Can't fetch page")
 
-                match = re.search(r'<a[^>]+id="downloadButton"[^>]+href="([^"]+)"', page)
+                match = re.search(
+                    r'<a[^>]+id="downloadButton"[^>]+href="([^"]+)"', page)
                 if not match:
-                    match = re.search(r'(https://download[0-9]+\.mediafire\.com/[^\s"\']+)', page)
+                    match = re.search(
+                        r'(https://download[0-9]+\.mediafire\.com/[^\s"\']+)', page)
                 if not match:
                     raise Exception("No download link found")
                 direct_url = match.group(1)
@@ -980,7 +1024,8 @@ class MMarkFolderSkinZeta(Screen):
         try:
             self['info'].setText(_('Download in progress...'))
             self["progress"].show()
-            percent = int(100 * recvbytes / float(totalbytes)) if totalbytes > 0 else 0
+            percent = int(100 * recvbytes / float(totalbytes)
+                          ) if totalbytes > 0 else 0
             self['progress'].setValue(percent)
             self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (
                 recvbytes // 1024, totalbytes // 1024, 100 * recvbytes / float(totalbytes))
@@ -992,7 +1037,9 @@ class MMarkFolderSkinZeta(Screen):
     def install(self, fplug):
         if os.path.exists('/tmp/download.zip'):
             if os.path.exists('/etc/enigma2/skin_user.xml'):
-                os.rename('/etc/enigma2/skin_user.xml', '/etc/enigma2/skin_user-bak.xml')
+                os.rename(
+                    '/etc/enigma2/skin_user.xml',
+                    '/etc/enigma2/skin_user-bak.xml')
             self['info'].setText(_('Install ...'))
             myCmd = "unzip -o -q '/tmp/download.zip' -d /"
             subprocess.Popen(myCmd, shell=True, executable='/bin/bash')
@@ -1003,7 +1050,9 @@ class MMarkFolderSkinZeta(Screen):
                 timeout=5)
         elif os.path.exists('/tmp/download.deb'):
             if os.path.exists('/etc/enigma2/skin_user.xml'):
-                os.rename('/etc/enigma2/skin_user.xml', '/etc/enigma2/skin_user-bak.xml')
+                os.rename(
+                    '/etc/enigma2/skin_user.xml',
+                    '/etc/enigma2/skin_user-bak.xml')
             self['info'].setText(_('Install ...'))
             myCmd = 'apt-get install --reinstall /tmp/download.deb -y'
             subprocess.Popen(myCmd, shell=True, executable='/bin/bash')
@@ -1014,7 +1063,9 @@ class MMarkFolderSkinZeta(Screen):
                 timeout=5)
         elif os.path.exists('/tmp/download.ipk'):
             if os.path.exists('/etc/enigma2/skin_user.xml'):
-                os.rename('/etc/enigma2/skin_user.xml', '/etc/enigma2/skin_user-bak.xml')
+                os.rename(
+                    '/etc/enigma2/skin_user.xml',
+                    '/etc/enigma2/skin_user-bak.xml')
             self['info'].setText(_('Install ...'))
             myCmd = 'opkg install --force-reinstall --force-overwrite /tmp/download.ipk > /dev/null'
             subprocess.Popen(myCmd, shell=True, executable='/bin/bash')
@@ -1153,7 +1204,8 @@ class mmConfig(Screen, ConfigListScreen):
             print("Error ", e)
 
     def changedEntry(self):
-        self['key_green'].setText(_('Save') if self['config'].isChanged() else '- - - -')
+        self['key_green'].setText(
+            _('Save') if self['config'].isChanged() else '- - - -')
         for x in self.onChangedEntry:
             x()
 
@@ -1258,8 +1310,10 @@ class PiconsPreview(Screen):
     from enigma import getDesktop
     x = getDesktop(0).size().width()
     y = getDesktop(0).size().height()
-    skin = '<screen flags="wfNoBorder" position="0,0" size="%d,%d" title="PiconsPreview" backgroundColor="#00000000">' % (x, y)
-    skin += '<widget name="pixmap" position="0,0" size="%d,%d" zPosition="1" alphatest="on" />' % (x, y)
+    skin = '<screen flags="wfNoBorder" position="0,0" size="%d,%d" title="PiconsPreview" backgroundColor="#00000000">' % (
+        x, y)
+    skin += '<widget name="pixmap" position="0,0" size="%d,%d" zPosition="1" alphatest="on" />' % (
+        x, y)
     skin += '</screen>'
 
     def __init__(self, session, previewPng=None):
@@ -1273,7 +1327,8 @@ class PiconsPreview(Screen):
         try:
             self.PicLoad.PictureData.get().append(self.DecodePicture)
         except Exception:
-            self.PicLoad_conn = self.PicLoad.PictureData.connect(self.DecodePicture)
+            self.PicLoad_conn = self.PicLoad.PictureData.connect(
+                self.DecodePicture)
         self["actions"] = ActionMap(
             [
                 "OkCancelActions",
@@ -1311,7 +1366,8 @@ def main(session, **kwargs):
 
 
 def menu(menuid, **kwargs):
-    return [(title_plug, main(), 'mmPicons by mMark', 44)] if menuid == "mainmenu" else []
+    return [(title_plug, main(), 'mmPicons by mMark', 44)
+            ] if menuid == "mainmenu" else []
 
 
 def systemmenu(menuid, **kwargs):
