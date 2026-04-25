@@ -1,54 +1,25 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-# --------------------#
-#   edit by Lululla   #
-#    skin by MMark    #
-#      22/09/2023     #
-# --------------------#
-
 from enigma import eTimer
-from os import unlink
-from twisted.internet import reactor
 import os
-import requests
-from .Utils import RequestAgent
+import ssl
+import socket
+from urllib.request import urlopen, Request
+from urllib.error import URLError, HTTPError
 
 
-try:
-    from urllib.request import urlopen, Request
-except ImportError:
-    from urllib2 import urlopen, Request
-
-sslverify = False
-try:
-    from twisted.internet import ssl
-    from twisted.internet._sslverify import ClientTLSOptions
-    sslverify = True
-except BaseException:
-    sslverify = False
-
-
-if sslverify:
-    class SNIFactory(ssl.ClientContextFactory):
-        def __init__(self, hostname=None):
-            self.hostname = hostname
-
-        def getContext(self):
-            ctx = self._contextFactory(self.method)
-            if self.hostname:
-                ClientTLSOptions(self.hostname, ctx)
-            return ctx
+def _get_request_agent():
+    from .Utils import RequestAgent
+    return RequestAgent()
 
 
 class DownloadWithProgress:
     def __init__(self, url, outputFile):
-        print('url:', url)
         self.url = url
         self.outputFile = outputFile
-        # "HbbTV/1.1.1 (+PVR+RTSP+DL; Sonic; TV44; 1.32.455; 2.002) Bee/3.5"
-        self.userAgent = RequestAgent()
-        self.blockSize = 0
+        self.userAgent = _get_request_agent()
+        self.blockSize = 524288  # 512KB
         self.totalSize = 0
         self.progress = 0
         self.progressCallback = None
@@ -56,89 +27,66 @@ class DownloadWithProgress:
         self.errorCallback = None
         self.stopFlag = False
         self.timer = eTimer()
-        if os.path.exists('/var/lib/dpkg/info'):
-            self.timer_conn = self.timer.timeout.connect(self.reportProgress)
-        else:
-            self.timer.callback.append(self.reportProgress)
+        self.timer.callback.append(self.reportProgress)
         self.timer.start(500, 1)
 
     def start(self):
-        try:
-            request = Request(self.url, None, {"User-agent": RequestAgent()})
-            feedFile = urlopen(request)
-            metaData = feedFile.headers
-            self.totalSize = int(metaData.get("Content-Length", 0))
-            self.blockSize = max(min(self.totalSize //
-                                     100, 1024), 131071) if self.totalSize else 65536
-        except OSError as err:
-            if self.errorCallback:
-                self.errorCallback(err)
-            return self
-        reactor.callInThread(self.run)
+        import threading
+        self.thread = threading.Thread(target=self._download)
+        self.thread.start()
         return self
 
-    def run(self):
-        # requests.Response object = requests.get(url, params=None, allow_redirects=True, auth=None, cert=None, cookies=None, headers=None, proxies=None, stream=False, timeout=None, verify=True)
-        # response = requests.get(self.url, headers={"User-agent":
-        # self.userAgent}, stream=True)  # Streaming, so we can iterate over
-        # the response.
-        # Streaming, so we can iterate over the response.
-        response = requests.get(
-            self.url,
-            headers={
-                "User-agent": RequestAgent()},
-            stream=True)
+    def _download(self):
         try:
-            with open(self.outputFile, "wb") as fd:
-                for buffer in response.iter_content(self.blockSize):
-                    if self.stopFlag:
-                        response.close()
-                        fd.close()
-                        unlink(self.outputFile)
-                        return True
-                    self.progress += len(buffer)
+            req = Request(self.url, headers={'User-Agent': self.userAgent})
+            context = ssl._create_unverified_context()
+            response = urlopen(req, timeout=30, context=context)
+            self.totalSize = int(response.headers.get('Content-Length', 0))
+            with open(self.outputFile, 'wb') as f:
+                while not self.stopFlag:
+                    chunk = response.read(self.blockSize)
+                    if not chunk:
+                        break
+                    self.progress += len(chunk)
+                    f.write(chunk)
                     if self.progressCallback:
                         self.timer.start(0, True)
-                    fd.write(buffer)
+            response.close()
+            if self.stopFlag:
+                os.unlink(self.outputFile)
+                return
             if self.endCallback:
                 self.endCallback(self.outputFile)
-        except OSError as err:
+        except Exception as e:
             if self.errorCallback:
-                self.errorCallback(err)
-        return False
+                self.errorCallback(e)
 
     def stop(self):
         self.stopFlag = True
 
     def reportProgress(self):
-        self.progressCallback(self.progress, self.totalSize)
+        if self.progressCallback:
+            self.progressCallback(self.progress, self.totalSize)
 
-    def addProgress(self, progressCallback):
-        self.progressCallback = progressCallback
+    def addProgress(self, callback):
+        self.progressCallback = callback
 
-    def addEnd(self, endCallback):
-        self.endCallback = endCallback
+    def addEnd(self, callback):
+        self.endCallback = callback
 
-    def addError(self, errorCallback):
-        self.errorCallback = errorCallback
+    def addError(self, callback):
+        self.errorCallback = callback
 
-    def setAgent(self, userAgent):
-        self.userAgent = userAgent
-
-    # Temporary supprt for deprecated callbacks.
-    def addErrback(self, errorCallback):
-        print("[Downloader] Warning: DownloadWithProgress 'addErrback' is deprecated use 'addError' instead!")
-        self.errorCallback = errorCallback
+    def addCallback(self, callback):
+        print("[Downloader] addCallback deprecated, use addEnd")
+        self.endCallback = callback
         return self
 
-    # Temporary supprt for deprecated callbacks.
-    def addCallback(self, endCallback):
-        print("[Downloader] Warning: DownloadWithProgress 'addCallback' is deprecated use 'addEnd' instead!")
-        self.endCallback = endCallback
+    def addErrback(self, callback):
+        print("[Downloader] addErrback deprecated, use addError")
+        self.errorCallback = callback
         return self
 
 
-# Class names should start with a Capital letter, this catches old code
-# until that code can be updated.
 class downloadWithProgress(DownloadWithProgress):
     pass

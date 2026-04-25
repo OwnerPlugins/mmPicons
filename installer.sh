@@ -1,6 +1,6 @@
 #!/bin/bash
 
-version='1.5'
+version='1.6'
 changelog='\nFix Download'
 
 TMPPATH=/tmp/mmPicons-install

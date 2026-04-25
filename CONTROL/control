@@ -1,5 +1,5 @@
 Package: enigma2-plugin-extensions-mmpicons
-Version: 1.5
+Version: 1.6
 Section: base
 Priority: optional
 Architecture: all
@@ -8,4 +8,4 @@ Description: mmPicons & Skins Version by Lululla & MMark
 Source: enigma2-plugin-extensions-mmpicons
 Homepage: https://e2skin.blogspot.com/
 OE: *
-License: *
+License: gplv3
