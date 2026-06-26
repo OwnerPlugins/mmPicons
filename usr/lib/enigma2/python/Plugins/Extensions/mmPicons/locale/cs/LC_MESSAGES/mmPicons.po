@@ -63,7 +63,7 @@ msgid "Do you want to restart Enigma?"
 msgstr "Chcete restartovat Enigmu?"
 
 msgid "Download Failed!"
-msgstr ""
+msgstr "Stahování se nezdařilo!"
 
 msgid "Download Failed..."
 msgstr "Stahování se nezdařilo..."
