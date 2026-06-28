@@ -4,6 +4,7 @@
 # [lululla] <ekekaz@gmail.com>, 2025.
 #
 
+
 msgid "%s it has been cleaned"
 msgstr ""
 

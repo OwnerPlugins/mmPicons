@@ -110,7 +110,7 @@ msgid "Remove"
 msgstr "Dûrxistin"
 
 msgid "Restart"
-msgstr ""
+msgstr "Ji nû ve bidin destpêkirin"
 
 msgid "SELECT YOUR CHOICE"
 msgstr "HILBIJARTINA XWE HILBIJARTIN"
